@@ -1,103 +1,614 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useRef, useEffect } from 'react';
+import domtoimage from 'dom-to-image-more';
+
+const unitOptions: Record<string, string[]> = {
+  'ศจส.บก.สนก.1 นทพ.': [
+    'ศจส.นพค11 สนภ.1 นทพ.',
+    'ศจส.นพค12 สนภ.1 นทพ.',
+    'ศจส.นพค13 สนภ.1 นทพ.',
+    'ศจส.นพค14 สนภ.1 นทพ.',
+    'ศจส.นพค15 สนภ.1 นทพ.',
+    'ศจส.นพค16 สนภ.1 นทพ.',
+    'ศจส.วส.934 สนภ.1 นทพ.',
+  ],
+  'ศจส.บก.สนก.2 นทพ.': [
+    'ศจส.นพค21 สนภ.2 นทพ.',
+    'ศจส.นพค22 สนภ.2 นทพ.',
+    'ศจส.นพค23 สนภ.2 นทพ.',
+    'ศจส.นพค24 สนภ.2 นทพ.',
+    'ศจส.นพค25 สนภ.2 นทพ.',
+    'ศจส.นพค26 สนภ.2 นทพ.',
+    'ศจส.วส.909 สนภ.2 นทพ.',
+  ],
+  'ศจส.บก.สนก.3 นทพ.': [
+    'ศจส.นพค31 สนภ.3 นทพ.',
+    'ศจส.นพค32 สนภ.3 นทพ.',
+    'ศจส.นพค33 สนภ.3 นทพ.',
+    'ศจส.นพค34 สนภ.3 นทพ.',
+    'ศจส.นพค35 สนภ.3 นทพ.',
+    'ศจส.นพค36 สนภ.3 นทพ.',
+    'ศจส.วส.914 สนภ.3 นทพ.',
+  ],
+  'ศจส.บก.สนก.4 นทพ.': [
+    'ศจส.นพค41 สนภ.4 นทพ.',
+    'ศจส.นพค42 สนภ.4 นทพ.',
+    'ศจส.นพค43 สนภ.4 นทพ.',
+    'ศจส.นพค44 สนภ.4 นทพ.',
+    'ศจส.นพค45 สนภ.4 นทพ.',
+    'ศจส.นพค46 สนภ.4 นทพ.',
+    'ศจส.วส.912 สนภ.4 นทพ.',
+  ],
+  'ศจส.บก.สนก.5 นทพ.': [
+    'ศจส.นพค51 สนภ.5 นทพ.',
+    'ศจส.นพค52 สนภ.5 นทพ.',
+    'ศจส.นพค53 สนภ.5 นทพ.',
+    'ศจส.นพค54 สนภ.5 นทพ.',
+    'ศจส.นพค55 สนภ.5 นทพ.',
+    'ศจส.นพค56 สนภ.5 นทพ.',
+    'ศจส.วส.921 สนภ.5 นทพ.',
+  ],
+  'เพิ่มเติม': [
+    'ศจส.สทพ.นทพ.',
+    'ศจส.กกส.สทพ.นทพ.',
+    'ศจส.กสข.สทพ.นทพ.',
+    'ศจส.นกส.1 สทพ.นทพ.',
+    'ศจส.นกส.2 สทพ.นทพ.',
+    'ศจส.นกส.3 สทพ.นทพ.',
+    'ศจส.นกส.4 สทพ.นทพ.',
+    'ศจส.นกส.5 สทพ.นทพ.',
+    'ศจส.สสน.นทพ.',
+    'ศจส.สนร.นทพ.',
+    'ศจส.นพศ.นทพ.',
+    'ศจส.ศฝภ.นทพ.',
+  ],
+};
+
+export default function Page() {
+  const [images, setImages] = useState<File[]>([]);
+  const [details, setDetails] = useState('');
+  const [date, setDate] = useState('');
+  const [mainUnit, setMainUnit] = useState('');
+  const [subUnit, setSubUnit] = useState('');
+  const [showPreview, setShowPreview] = useState(false);
+  const [isConfirmed, setIsConfirmed] = useState(false);
+
+  useEffect(() => {
+  if (subUnit) {
+    // ถ้ายังไม่มีข้อความใน details จะเติม subUnit ให้อัตโนมัติ
+    if (!details.includes(subUnit)) {
+      setDetails((prev) => `${prev ? prev + '\n' : ''}${subUnit}`);
+    }
+  }
+}, [subUnit]);
+
+
+  const previewRef = useRef<HTMLDivElement>(null);
+  const previewScale = 0.34;
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files).slice(0, 5 - images.length);
+      setImages([...images, ...newFiles]);
+    }
+  };
+
+  const handleRemoveImage = (index: number) => {
+    const newImages = [...images];
+    newImages.splice(index, 1);
+    setImages(newImages);
+  };
+
+  const handleSubmit = () => {
+    if (!date || !details || images.length === 0) {
+      alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+      return;
+    }
+    setShowPreview(true);
+  };
+
+  const handleDownload = () => {
+    if (!previewRef.current) return;
+
+    const origin = previewRef.current;
+    const clone = origin.cloneNode(true) as HTMLDivElement;
+
+    // ลบสเกล
+    clone.style.transform = '';
+    clone.style.transformOrigin = '';
+
+    clone.style.position = 'fixed';
+    clone.style.top = '-9999px';
+    clone.style.left = '-9999px';
+    document.body.appendChild(clone);
+
+    domtoimage
+    .toPng(clone, {
+      width: 1920,
+      height: 1080
+    })
+    .then((dataUrl) => {
+      const link = document.createElement('a');
+      link.download = `แบบฟอร์มจิตอาสา.png`;
+      link.href = dataUrl;
+      link.click();
+    })
+    .catch((error) => {
+      console.error('Error generating image:', error);
+    })
+    .finally(() => {
+      document.body.removeChild(clone);
+    });
+  };
+
+ const handleConfirm = async () => {
+  const payload = {
+    mainUnit,
+    subUnit,
+    date,
+    details,
+  };
+
+  try {
+    const res = await fetch('/api/form', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      alert('บันทึกข้อมูลสำเร็จ');
+      setIsConfirmed(true);
+    } else {
+      alert('เกิดข้อผิดพลาดในการบันทึก');
+    }
+  } catch (error) {
+    alert('ไม่สามารถเชื่อมต่อ API ได้');
+    console.error(error);
+  }
+};
+
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div
+      style={{
+        maxWidth: '700px',
+        marginTop: '70px',
+        margin: '0 auto',
+        padding: '25px',
+        borderRadius: '15px',
+        boxShadow: '0 8px 16px rgba(0,0,0,0.15)',
+        fontFamily: 'Prompt, sans-serif',
+      }}
+      className='bg-gradient-to-br from-lime-200 to-green-100'
+    >
+      {!showPreview ? (
+        <div
+          style={{
+            maxWidth: '600px',
+            margin: '0 auto',
+            marginTop: '20px',
+            background: 'rgba(255, 255, 255, 0.5)',
+            padding: '20px',
+            borderRadius: '10px',
+            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+          }}
+        >
+          <h2
+            style={{
+              textAlign: 'center',
+              marginBottom: '25px',
+              color: '#333',
+              fontSize: '24px',
+              fontWeight: 'bold',
+            }}
+          >
+            📋 ฟอร์มส่งข้อมูลจิตอาสา
+          </h2>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          {/* Main Unit */}
+          <label style={{ marginTop: '10px'}}>หน่วยงานหลัก:</label>
+          <select value={mainUnit} onChange={(e) => { setMainUnit(e.target.value); setSubUnit(''); }} style={{ width: '100%', border:'1px solid grey', borderRadius: '8px', padding: '10px', marginBottom: '20px' }}>
+            <option value="">-- เลือกหน่วยงานหลัก --</option>
+            {Object.keys(unitOptions).map((main) => (
+              <option key={main} value={main}>{main}</option>
+            ))}
+          </select>
+
+          {/* Sub Unit */}
+          {mainUnit && (
+            <>
+              <label style={{ marginTop: '100px' }}>หน่วยงานย่อย:</label>
+              <select value={subUnit} onChange={(e) => setSubUnit(e.target.value)} style={{ width: '100%', border:'1px solid grey', borderRadius: '8px', padding: '10px', marginBottom: '20px' }}>
+                <option value="">-- เลือกหน่วยงานย่อย --</option>
+                {unitOptions[mainUnit].map((sub) => (
+                  <option key={sub} value={sub}>{sub}</option>
+                ))}
+              </select>
+            </>
+          )}
+
+          {/* Upload */}
+          <label
+            style={{
+              fontWeight: 'bold',
+              display: 'block',
+              marginBottom: '8px',
+            }}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
+            📁 อัปโหลดรูปภาพ (สูงสุด 5 รูป)
+          </label>
+
+          <label
+            style={{
+              display: 'inline-block',
+              padding: '10px 20px',
+              background: '#007bff',
+              color: '#fff',
+              borderRadius: '8px',
+              cursor: 'pointer',
+              transition: 'background 0.3s ease',
+              marginBottom: '12px',
+            }}
+          >
+            เลือกรูปภาพ
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+              style={{ display: 'none' }}
             />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          </label>
+
+          <div
+            style={{
+              display: 'flex',
+              gap: '10px',
+              flexWrap: 'wrap',
+              marginTop: '10px',
+            }}
           >
-            Read our docs
-          </a>
+            {images.map((img, idx) => (
+              <div
+                key={idx}
+                style={{
+                  position: 'relative',
+                  width: '100px',
+                  height: '100px',
+                  borderRadius: '8px',
+                  overflow: 'hidden',
+                  border: '2px solid #ddd',
+                }}
+              >
+                <img
+                  src={URL.createObjectURL(img)}
+                  style={{
+                    width: '100px',
+                    height: '100px',
+                    objectFit: 'cover',
+                    borderRadius: '5px',
+                  }}
+                />
+                <button
+                  onClick={() => handleRemoveImage(idx)}
+                  style={{
+                    position: 'absolute',
+                    top: '2px',
+                    right: '2px',
+                    background: 'red',
+                    color: '#fff',
+                    border: 'none',
+                    borderRadius: '50%',
+                    width: '20px',
+                    height: '20px',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    lineHeight: '1',
+                    padding: '0',
+                  }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+
+          {/* Details */}
+          <label style={{ marginTop: '10px', display: 'block' }}>
+            รายละเอียด:
+          </label>
+          <textarea
+            value={details}
+            onChange={(e) => setDetails(e.target.value)}
+            style={{ width: '100%', minHeight: '150px',border:'1px solid grey', borderRadius: '8px' }}
+          ></textarea>
+
+          {/* Date */}
+          <label style={{ marginTop: '10px', display: 'block' }}>
+            วันที่:
+          </label>
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            style={{border:'1px solid grey', borderRadius: '8px', padding: '10px' }}
+          />
+
+          {/* button */}
+          <div style={{ marginTop: '20px', textAlign: 'center' }}>
+
+            {/* Confirm */}
+            <button
+              className="bg-green-600 text-white px-4 py-2 rounded-md"
+              onClick={handleConfirm}
+            >
+              ✅ ยืนยัน
+            </button>
+
+            {/* Image */}
+            {isConfirmed && (
+              <button
+              onClick={handleSubmit}
+              style={{
+                background: '#007bff',
+                color: '#fff',
+                padding: '9px 10px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                marginLeft: '50px',
+              }}
+              >
+                ✅ แสดง Form
+              </button>
+            )}
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
+      ) : (
+        <div
+          style={{
+            position: 'relative',
+            width: `${1920 * previewScale}px`,
+            height: `${1080 * previewScale}px`,
+            margin: '0 auto',
+            marginTop: '4px',
+            }}
         >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+          {/* Preview */}
+          <div
+            ref={previewRef}
+            style={{
+              width: '1920px',
+              height: '1080px',
+              borderRadius: '20px',
+              overflow: 'hidden',
+              background: 'linear-gradient(to right, #d7fc3a, #76f1a5)',
+              padding: '20px',
+              boxSizing: 'border-box',
+              fontFamily: 'Prompt, sans-serif',
+              transform: `scale(${previewScale})`,
+              transformOrigin: 'top left',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '10px',
+              position: 'absolute',
+              top: 0,
+              left: 0,
+            }}
+          >
+            {/* Header */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr 2fr 2fr 1fr 1fr',
+                alignItems: 'center',
+                padding: '10px 20px',
+                borderRadius: '15px',
+                border: '4px solid #00bfff',
+                gap: '10px',
+              }}
+            >
+              {/* logo 1 */}
+              <img
+                src="/images/01x.png"
+                alt="ตรา1"
+                style={{
+                  width: '100%',
+                  maxWidth: '180px',
+                  height: 'auto',
+                  marginLeft: '50px',
+                }}
+              />
+
+              {/* text */}
+              <div
+                style={{
+                  gridColumn: '2 / span 2',
+                  textAlign: 'center',
+                  fontWeight: 'bold',
+                  fontSize: '34px',
+                  lineHeight: '1.4',
+                  marginRight: '50px',
+                  color: '#004d86',
+                }}
+              >
+                รายงานการปฏิบัติ จิตอาสา 904 และจิตอาสาพระราชทาน<br />
+                หน่วยบัญชาการทหารพัฒนา เราทำความ ดี ด้วยหัวใจ
+              </div>
+
+              {/* logo 2 */}
+              <img
+                src="/images/03x.png"
+                alt="ตรา2"
+                style={{
+                  width: '100%',
+                  maxWidth: '140px',
+                  height: 'auto',
+                }}
+              />
+
+              {/* date */}
+              <div
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                  gap: '5px',
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: '24px',
+                    color:'#004d86',
+                    border:'none',
+                  }}
+                >
+                  ประจำวันที่ {new Date(date).toLocaleDateString('th-TH')} 
+                </div>
+                <div
+                  style={{
+                    padding: '16px 32px',
+                    borderRadius: '10px',
+                    border: '2px solid #00bfff',
+                    background: '#fff',
+                    minWidth: '140px',
+                    textAlign: 'center',
+                    fontSize: '28px',
+                    color: '#04abcc',
+                    marginTop: '10px',
+                  }}
+                >
+                  จิตอาสาพัฒนา
+                </div>
+              </div>
+            </div>
+
+            {/* Body */}
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '2fr 1fr 1fr',
+                gridTemplateRows: '1fr 1fr',
+                gridGap: '20px',
+                height: '600px',
+                flexShrink: 0,
+                border: 'none',
+              }}
+            >
+              <div
+                style={{
+                  gridRow: '1 / span 2',
+                  borderRadius: '10px',
+                  overflow: 'hidden',
+                  background: '#2266aa',
+                  border: 'none',
+                }}
+              >
+                {images[0] && (
+                  <img
+                    src={URL.createObjectURL(images[0])}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      border: 'none',
+                    }}
+                  />
+                )}
+              </div>
+
+              {images.slice(1).map((img, idx) => (
+                <div
+                  key={idx}
+                  style={{
+                    borderRadius: '10px',
+                    overflow: 'hidden',
+                    background: '#2266aa',
+                    border: 'none',
+                  }}
+                >
+                  <img
+                    src={URL.createObjectURL(img)}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover',
+                      border: 'none',
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+
+            {/* Details */}
+            <div
+              style={{
+                background: '#3b50ce',
+                borderRadius: '10px',
+                padding: '20px',
+                color: '#000000',
+                fontSize: '34px',
+                lineHeight: '1.8',
+                minHeight: '150px',
+                whiteSpace: 'pre-wrap', // ให้เว้นบรรทัด
+                wordBreak: 'break-word', // ตัดคำ
+                textIndent: '2em',
+                height: '300px',
+                border: 'none',
+              }}
+            >
+              {details}
+            </div>
+          </div>
+
+          {/* Download / Back */}
+          <div style={{
+             position: 'absolute',
+             bottom: '10px',
+             left: '20%',
+             transform: 'translate(5%, 200%)',
+             gap: '10px',
+             display: 'flex',
+            }}
+          >
+            <button
+              onClick={handleDownload}
+              style={{
+                background: '#28a745',
+                color: '#fff',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+                marginRight: '10px',
+              }}
+            >
+              📥 ดาวน์โหลดเป็น PNG
+            </button>
+
+            <button
+              onClick={() => setShowPreview(false)}
+              style={{
+                background: '#6c757d',
+                color: '#fff',
+                padding: '10px 20px',
+                borderRadius: '8px',
+                border: 'none',
+                cursor: 'pointer',
+              }}
+            >
+              🔙 กลับไปแก้ไข
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
