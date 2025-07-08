@@ -465,7 +465,7 @@ export default function Page() {
               >
                 <div
                   style={{
-                    fontSize: '24px',
+                    fontSize: '28px',
                     color:'#004d86',
                     border:'none',
                   }}
@@ -475,7 +475,7 @@ export default function Page() {
                 <div
                   style={{
                     padding: '16px 32px',
-                    borderRadius: '10px',
+                    borderRadius: '50px',
                     border: '2px solid #00bfff',
                     background: '#fff',
                     minWidth: '140px',
@@ -550,7 +550,7 @@ export default function Page() {
             {/* Details */}
             <div
               style={{
-                background: '#3b50ce',
+                background: '#3b9ace',
                 borderRadius: '10px',
                 padding: '20px',
                 color: '#000000',
