@@ -1,12 +1,15 @@
 // app/api/update/[id]/route.ts
 import { NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { dbConnect } from '@/lib/mongodb';
 import FormModel from '@/models/Form';
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: NextRequest) {
   await dbConnect();
 
-  const { id } = params;
+  const url = new URL(req.url);
+  const id = url.pathname.split('/').pop(); // ดึง id จาก URL
+
   const body = await req.json();
   const { details } = body;
 
