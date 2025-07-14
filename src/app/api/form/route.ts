@@ -8,9 +8,9 @@ export async function POST(request: NextRequest) {
     await dbConnect();
     const body = await request.json();
 
-    const { mainUnit, subUnit, date, details } = body;
+    const { mainUnit, subUnit, date, details, formType } = body;
 
-    if (!mainUnit || !date || !details) {
+    if (!mainUnit || !date || !details || !formType ) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
@@ -19,6 +19,7 @@ export async function POST(request: NextRequest) {
       subUnit,
       date,
       details,
+      formType,
     });
 
     return NextResponse.json({ success: true, data: newForm });

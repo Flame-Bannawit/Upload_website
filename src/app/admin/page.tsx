@@ -20,6 +20,7 @@ export default function Admin() {
   const [unitFilter, setUnitFilter] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [volunteerTypeFilter, setVolunteerTypeFilter] = useState('');
 
   useEffect(() => {
     fetch('/api/all')
@@ -50,8 +51,32 @@ export default function Admin() {
       data = data.filter((rec) => rec.details.toLowerCase().includes(lowerSearch));
     }
 
+    if (volunteerTypeFilter) {
+      data = data.filter((rec) => rec.volunteerType === volunteerTypeFilter);
+    }
+
     setFiltered(data);
   }, [search, unitFilter, startDate, endDate, records]);
+
+  const handleEdit = (id: string, currentDetail: string) => {
+  const newDetail = prompt('แก้ไขรายละเอียด', currentDetail);
+  if (newDetail !== null) {
+    fetch(`/api/update/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ details: newDetail }),
+      })
+      .then(() => location.reload());
+    }
+  };
+
+const handleDelete = (id: string) => {
+  if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบข้อมูลนี้?')) {
+    fetch(`/api/delete/${id}`, {
+      method: 'DELETE',
+    }).then(() => location.reload());
+  }
+};
 
   return (
     <div className="p-4 bg-gradient-to-br from-lime-200 to-teal-200 min-h-screen">
@@ -88,6 +113,19 @@ export default function Admin() {
           </div>
 
           <div className="flex flex-col">
+            <label className="font-semibold text-sm text-blue-800 mb-1">ประเภทจิตอาสา</label>
+            <select
+              value={volunteerTypeFilter}
+              onChange={(e) => setVolunteerTypeFilter(e.target.value)}
+              className="border border-blue-400 rounded px-3 py-2"
+            >
+              <option value="">-- แสดงทั้งหมด --</option>
+              <option value="จิตอาสาพัฒนา">จิตอาสาพัฒนา</option>
+              <option value="จิตอาสาภัยพิบัติ">จิตอาสาภัยพิบัติ</option>
+            </select>
+          </div>
+
+          <div className="flex flex-col">
             <label className="font-semibold text-sm text-blue-800 mb-1">ถึงวันที่</label>
             <input
               type="date"
@@ -97,22 +135,37 @@ export default function Admin() {
             />
           </div>
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-sm text-blue-800 mb-1">ค้นหา (รายละเอียด)</label>
-            <input
-              type="text"
-              placeholder="ค้นหาคำในรายละเอียด..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="border border-blue-400 rounded px-3 py-2 w-full"
-            />
-          </div>
         </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mb-6">
+            <div className="flex col-span-3">
+              <input
+                type="text"
+                placeholder="ค้นหาคำในรายละเอียด..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                className="border border-blue-400 rounded px-3 py-2 w-full"
+              />
+            </div>
+            <button
+              onClick={() => {
+              const lowerSearch = search.toLowerCase();
+              const data = records.filter((rec) =>
+                rec.details.toLowerCase().includes(lowerSearch)
+              );
+              setFiltered(data);
+            }}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 w-20px rounded"
+          >
+            🔍 ค้นหา
+            </button>
+          </div>
 
         <table className="w-full table-auto border border-blue-300 rounded-lg overflow-hidden text-sm">
           <thead className="bg-gradient-to-r from-lime-300 to-teal-200 text-gray-800">
             <tr>
               <th className="border px-4 py-2">หน่วยงาน</th>
+              <th className="border px-4 py-2">ประเภทจิตอาสา</th>
               <th className="border px-4 py-2">วันที่</th>
               <th className="border px-4 py-2">รายละเอียด</th>
             </tr>
@@ -121,9 +174,31 @@ export default function Admin() {
             {filtered.map((rec, idx) => (
               <tr key={idx} className="even:bg-white/50 odd:bg-white/30 transition hover:bg-yellow-50">
                 <td className="border px-4 py-2 ">{rec.subUnit}</td>
+                <td className="border px-4 py-2">{rec.volunteerType}</td>
                 <td className="border px-4 py-2">{rec.date}</td>
-                <td className="border px-4 py-2 whitespace-pre-wrap break-words" title={rec.details}>
+                <td className="border px-4 py-2 whitespace-pre-wrap break-words relative group" title={rec.details}>
                   {rec.details}
+                  <div className='mt-2 flex gap-2'>
+                    <button
+                      onClick={() => navigator.clipboard.writeText(rec.details)}
+                      className="bg-blue-500 hover:bg-blue-600  hover:pointer text-white font-semibold py-1 px-3 rounded shadow-md transition duration-200"
+                    >
+                      📋 Coppy
+                    </button>
+                    <button
+                      onClick={() => handleEdit(rec._id, rec.details)}
+                      className="bg-yellow-400 hover:bg-yellow-500 hover:pointer text-white font-semibold py-1 px-3 rounded shadow-md transition duration-200"
+                    >
+                      ✏️ Edit
+                    </button>
+                    <button
+                      onClick={() => handleDelete(rec._id)}
+                      className="bg-red-500 hover:bg-red-600 hover:pointer text-white font-semibold py-1 px-3 rounded shadow-md transition duration-200"
+                    >
+                      🗑️ Delete
+                    </button>
+
+                  </div>
                 </td>
               </tr>
             ))}

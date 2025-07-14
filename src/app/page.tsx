@@ -73,6 +73,7 @@ export default function Page() {
   const [subUnit, setSubUnit] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
+  const [formType, setFormType] = useState<'development' | 'disaster'>('development');
 
   useEffect(() => {
   if (subUnit) {
@@ -148,6 +149,7 @@ export default function Page() {
     subUnit,
     date,
     details,
+    formType,
   };
 
   try {
@@ -231,6 +233,28 @@ export default function Page() {
               </select>
             </>
           )}
+
+          {/* Radio */}
+          <div style={{ marginBottom: '20px' }}>
+            <label>
+              <input 
+                type="radio"
+                name='formType'
+                value="development"
+                checked={formType === 'development'}
+                onChange={() => setFormType('development')}
+              /> จิตอาสาพัฒนา
+            </label>
+            <label style={{marginLeft: '20px'}}>
+              <input
+                type="radio"
+                name="formType"
+                value="disaster"
+                checked={formType === 'disaster'}
+                onChange={() => setFormType('disaster')}
+              />จิตอาสาภัยพิบัติ
+            </label>
+          </div>
 
           {/* Upload */}
           <label
@@ -465,7 +489,7 @@ export default function Page() {
               >
                 <div
                   style={{
-                    fontSize: '28px',
+                    fontSize: '26px',
                     color:'#004d86',
                     border:'none',
                   }}
@@ -480,12 +504,16 @@ export default function Page() {
                     background: '#fff',
                     minWidth: '140px',
                     textAlign: 'center',
-                    fontSize: '28px',
+                    fontSize: '26px',
                     color: '#04abcc',
                     marginTop: '10px',
                   }}
                 >
-                  จิตอาสาพัฒนา
+                  {formType === 'development' ? (
+                    <>จิตอาสาพัฒนา</>
+                  ) : (
+                    <>จิตอาสาภัยพิบัติ</>
+                  )}
                 </div>
               </div>
             </div>
@@ -550,7 +578,7 @@ export default function Page() {
             {/* Details */}
             <div
               style={{
-                background: '#3b9ace',
+                background: formType === 'disaster' ? '#B22222' : '#3b9ace',
                 borderRadius: '10px',
                 padding: '20px',
                 color: '#000000',
