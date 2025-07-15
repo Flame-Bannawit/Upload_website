@@ -13,6 +13,17 @@ const unitOptions: Record<string, string[]> = {
 
 const allSubUnits = Object.values(unitOptions).flat();
 
+const formatFormType = (type: string) => {
+  switch (type) {
+    case 'development':
+      return 'จิตอาสาพัฒนา';
+    case 'disaster':
+      return 'จิตอาสาภัยพิบัติ';
+    default:
+      return type;
+  }
+};
+
 export default function Admin() {
   const [records, setRecords] = useState<any[]>([]);
   const [filtered, setFiltered] = useState<any[]>([]);
@@ -20,7 +31,7 @@ export default function Admin() {
   const [unitFilter, setUnitFilter] = useState('');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [volunteerTypeFilter, setVolunteerTypeFilter] = useState('');
+  const [formTypeFilter, setFormTypeFilter] = useState('');
 
   useEffect(() => {
     fetch('/api/all')
@@ -51,12 +62,12 @@ export default function Admin() {
       data = data.filter((rec) => rec.details.toLowerCase().includes(lowerSearch));
     }
 
-    if (volunteerTypeFilter) {
-      data = data.filter((rec) => rec.volunteerType === volunteerTypeFilter);
+    if (formTypeFilter) {
+      data = data.filter((rec) => rec.formType === formTypeFilter);
     }
 
     setFiltered(data);
-  }, [search, unitFilter, startDate, endDate, records]);
+  }, [search, unitFilter, startDate, endDate, formTypeFilter, records]);
 
   const handleEdit = (id: string, currentDetail: string) => {
   const newDetail = prompt('แก้ไขรายละเอียด', currentDetail);
@@ -115,8 +126,8 @@ const handleDelete = (id: string) => {
           <div className="flex flex-col">
             <label className="font-semibold text-sm text-blue-800 mb-1">ประเภทจิตอาสา</label>
             <select
-              value={volunteerTypeFilter}
-              onChange={(e) => setVolunteerTypeFilter(e.target.value)}
+              value={formTypeFilter}
+              onChange={(e) => setFormTypeFilter(e.target.value)}
               className="border border-blue-400 rounded px-3 py-2"
             >
               <option value="">-- แสดงทั้งหมด --</option>
@@ -174,7 +185,7 @@ const handleDelete = (id: string) => {
             {filtered.map((rec, idx) => (
               <tr key={idx} className="even:bg-white/50 odd:bg-white/30 transition hover:bg-yellow-50">
                 <td className="border px-4 py-2 ">{rec.subUnit}</td>
-                <td className="border px-4 py-2">{rec.volunteerType}</td>
+                <td className="border px-4 py-2">{formatFormType(rec.formType)}</td>
                 <td className="border px-4 py-2">{rec.date}</td>
                 <td className="border px-4 py-2 whitespace-pre-wrap break-words relative group" title={rec.details}>
                   {rec.details}
