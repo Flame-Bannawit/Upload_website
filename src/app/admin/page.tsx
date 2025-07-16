@@ -19,7 +19,7 @@ const formatFormType = (type: string) => {
       return 'จิตอาสาพัฒนา';
     case 'disaster':
       return 'จิตอาสาภัยพิบัติ';
-    case 'spacial':
+    case 'special':
       return 'จิตอาสาเฉพาะกิจ';
     default:
       return type;
@@ -134,7 +134,7 @@ const handleDelete = (id: string) => {
                 if (val === '') setFormTypeFilter('');
                 else if (val === 'จิตอาสาพัฒนา') setFormTypeFilter('development');
                 else if (val === 'จิตอาสาภัยพิบัติ') setFormTypeFilter('disaster');
-                else if (val === 'จิตอาสาเฉพาะกิจ') setFormTypeFilter('spacial');
+                else if (val === 'จิตอาสาเฉพาะกิจ') setFormTypeFilter('special');
               }}
               className="border border-blue-400 rounded px-3 py-2"
             >
