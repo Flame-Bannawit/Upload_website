@@ -73,7 +73,7 @@ export default function Page() {
   const [subUnit, setSubUnit] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [formType, setFormType] = useState<'development' | 'disaster'>('development');
+  const [formType, setFormType] = useState<'development' | 'disaster' | 'spacial'>('development');
 
   useEffect(() => {
   if (subUnit) {
@@ -253,6 +253,15 @@ export default function Page() {
                 checked={formType === 'disaster'}
                 onChange={() => setFormType('disaster')}
               />จิตอาสาภัยพิบัติ
+            </label>
+            <label style={{marginLeft: '20px'}}>
+              <input 
+                type="radio"
+                name='formType'
+                value="spacial"
+                checked={formType === 'spacial'}
+                onChange={() => setFormType('spacial')}
+              /> จิตอาสาเฉพาะกิจ
             </label>
           </div>
 

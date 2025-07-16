@@ -19,6 +19,8 @@ const formatFormType = (type: string) => {
       return 'จิตอาสาพัฒนา';
     case 'disaster':
       return 'จิตอาสาภัยพิบัติ';
+    case 'spacial':
+      return 'จิตอาสาเฉพาะกิจ';
     default:
       return type;
   }
@@ -127,12 +129,19 @@ const handleDelete = (id: string) => {
             <label className="font-semibold text-sm text-blue-800 mb-1">ประเภทจิตอาสา</label>
             <select
               value={formTypeFilter}
-              onChange={(e) => setFormTypeFilter(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                if (val === '') setFormTypeFilter('');
+                else if (val === 'จิตอาสาพัฒนา') setFormTypeFilter('development');
+                else if (val === 'จิตอาสาภัยพิบัติ') setFormTypeFilter('disaster');
+                else if (val === 'จิตอาสาเฉพาะกิจ') setFormTypeFilter('spacial');
+              }}
               className="border border-blue-400 rounded px-3 py-2"
             >
               <option value="">-- แสดงทั้งหมด --</option>
               <option value="จิตอาสาพัฒนา">จิตอาสาพัฒนา</option>
               <option value="จิตอาสาภัยพิบัติ">จิตอาสาภัยพิบัติ</option>
+              <option value="จิตอาสาเฉพาะกิจ">จิตอาสาเฉพาะกิจ</option>
             </select>
           </div>
 
