@@ -73,7 +73,7 @@ export default function Page() {
   const [subUnit, setSubUnit] = useState('');
   const [showPreview, setShowPreview] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState(false);
-  const [formType, setFormType] = useState<'development' | 'disaster' | 'spacial'>('development');
+  const [formType, setFormType] = useState<'development' | 'disaster' | 'special'>('development');
 
   useEffect(() => {
   if (subUnit) {
@@ -258,9 +258,9 @@ export default function Page() {
               <input 
                 type="radio"
                 name='formType'
-                value="spacial"
-                checked={formType === 'spacial'}
-                onChange={() => setFormType('spacial')}
+                value="special"
+                checked={formType === 'special'}
+                onChange={() => setFormType('special')}
               /> จิตอาสาเฉพาะกิจ
             </label>
           </div>
@@ -454,7 +454,7 @@ export default function Page() {
                   width: '100%',
                   maxWidth: '180px',
                   height: 'auto',
-                  marginLeft: '50px',
+                  marginLeft: '10px',
                 }}
               />
 
@@ -464,14 +464,14 @@ export default function Page() {
                   gridColumn: '2 / span 2',
                   textAlign: 'center',
                   fontWeight: 'bold',
-                  fontSize: '34px',
+                  fontSize: '32px',
                   lineHeight: '1.4',
-                  marginRight: '50px',
+                  marginRight: '80px',
                   color: '#004d86',
                 }}
               >
                 รายงานการปฏิบัติ จิตอาสา 904 และจิตอาสาพระราชทาน<br />
-                หน่วยบัญชาการทหารพัฒนา เราทำความ ดี ด้วยหัวใจ
+                ศูนย์จิตอาสา หน่วยบัญชาการทหารพัฒนา เราทำความ ดี ด้วยหัวใจ
               </div>
 
               {/* logo 2 */}
@@ -482,6 +482,7 @@ export default function Page() {
                   width: '100%',
                   maxWidth: '140px',
                   height: 'auto',
+                  marginRight: '20px',
                 }}
               />
 
@@ -503,11 +504,13 @@ export default function Page() {
                     border:'none',
                   }}
                 >
-                  ประจำวันที่ {new Date(date).toLocaleDateString('th-TH')} 
+                  ประจำวันที่ {new Date(date).toLocaleDateString('th-TH',
+                    { year: 'numeric', month: 'short', day: 'numeric' }
+                  )} 
                 </div>
                 <div
                   style={{
-                    padding: '16px 32px',
+                    padding: '16px 25px',
                     borderRadius: '50px',
                     border: '2px solid #00bfff',
                     background: '#fff',
@@ -520,8 +523,10 @@ export default function Page() {
                 >
                   {formType === 'development' ? (
                     <>จิตอาสาพัฒนา</>
-                  ) : (
+                  ) : formType === 'disaster' ? (
                     <>จิตอาสาภัยพิบัติ</>
+                  ) : (
+                    <>จิตอาสาเฉพาะกิจ</>
                   )}
                 </div>
               </div>
@@ -588,7 +593,7 @@ export default function Page() {
             <div
               style={{
                 background: formType === 'disaster' ? '#B22222' : '#3b9ace',
-                borderRadius: '10px',
+                borderRadius: '30px',
                 padding: '20px',
                 color: '#000000',
                 fontSize: '34px',
@@ -598,7 +603,7 @@ export default function Page() {
                 wordBreak: 'break-word', // ตัดคำ
                 textIndent: '2em',
                 height: '300px',
-                border: 'none',
+                border: '3px solid #004d86',
               }}
             >
               {details}
