@@ -443,18 +443,20 @@ export default function Page() {
                 padding: '10px 20px',
                 borderRadius: '15px',
                 border: '4px solid #00bfff',
-                gap: '10px',
+                gap: '2px',
+                fontFamily: "TH Sarabun New, sans-serif",
+                fontWeight: '20px',
               }}
             >
               {/* logo 1 */}
               <img
-                src="/images/01x.png"
+                src="/images/image_logo_01.png"
                 alt="ตรา1"
                 style={{
                   width: '100%',
-                  maxWidth: '180px',
-                  height: 'auto',
-                  marginLeft: '10px',
+                  maxWidth: '300px',
+                  height: '190px',
+                  marginLeft:'-25px',
                 }}
               />
 
@@ -463,26 +465,30 @@ export default function Page() {
                 style={{
                   gridColumn: '2 / span 2',
                   textAlign: 'center',
-                  fontWeight: 'bold',
-                  fontSize: '32px',
-                  lineHeight: '1.4',
-                  marginRight: '80px',
+                  fontSize: '40px',
+                  lineHeight: '1.8',
+                  marginLeft: '-60px',
                   color: '#004d86',
+                  whiteSpace: 'nowrap',
                 }}
               >
-                รายงานการปฏิบัติ จิตอาสา 904 และจิตอาสาพระราชทาน<br />
-                ศูนย์จิตอาสา หน่วยบัญชาการทหารพัฒนา เราทำความ ดี ด้วยหัวใจ
+                <p style={{ margin: 0, textIndent: '2em', border: 'none' }}>
+                  รายงานการปฏิบัติ จิตอาสา 904 และจิตอาสาพระราชทาน
+                </p>
+                <p style={{ margin: 0, border: 'none' }}>
+                  ศูนย์จิตอาสา หน่วยบัญชาการทหารพัฒนา เราทำความ ดี ด้วยหัวใจ
+                </p>
               </div>
 
               {/* logo 2 */}
               <img
-                src="/images/03x.png"
+                src="/images/image_logo_02.png"
                 alt="ตรา2"
                 style={{
                   width: '100%',
                   maxWidth: '140px',
                   height: 'auto',
-                  marginRight: '20px',
+                  marginLeft: '90px',
                 }}
               />
 
@@ -493,15 +499,16 @@ export default function Page() {
                   flexDirection: 'column',
                   alignItems: 'center',
                   fontSize: '20px',
-                  fontWeight: 'bold',
-                  gap: '5px',
+                  gap: '2px',
                 }}
               >
                 <div
                   style={{
-                    fontSize: '26px',
+                    fontSize: '37px',
                     color:'#004d86',
+                    padding: '5px 20px',
                     border:'none',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   ประจำวันที่ {new Date(date).toLocaleDateString('th-TH',
@@ -510,15 +517,18 @@ export default function Page() {
                 </div>
                 <div
                   style={{
-                    padding: '16px 25px',
+                    padding: '8px 25px',
                     borderRadius: '50px',
-                    border: '2px solid #00bfff',
+                    border: '5px solid #00bfff',
                     background: '#fff',
                     minWidth: '140px',
                     textAlign: 'center',
-                    fontSize: '26px',
+                    fontSize: '40px',
+                    fontWeight: 'bold',
                     color: '#04abcc',
                     marginTop: '10px',
+                    whiteSpace: 'nowrap',
+                    fontFamily: 'TH Sarabun New, sans-serif',
                   }}
                 >
                   {formType === 'development' ? (
@@ -539,7 +549,7 @@ export default function Page() {
                 gridTemplateColumns: '2fr 1fr 1fr',
                 gridTemplateRows: '1fr 1fr',
                 gridGap: '20px',
-                height: '600px',
+                height: '550px',
                 flexShrink: 0,
                 border: 'none',
               }}
@@ -592,12 +602,12 @@ export default function Page() {
             {/* Details */}
             <div
               style={{
-                background: formType === 'disaster' ? '#B22222' : '#3b9ace',
+                background: '#3b9ace',
                 borderRadius: '30px',
                 padding: '20px',
                 color: '#000000',
-                fontSize: '34px',
-                lineHeight: '1.8',
+                fontSize: '36px',
+                lineHeight: '1.6',
                 minHeight: '150px',
                 whiteSpace: 'pre-wrap', // ให้เว้นบรรทัด
                 wordBreak: 'break-word', // ตัดคำ
