@@ -126,6 +126,16 @@ const handleDelete = (id: string) => {
           </div>
 
           <div className="flex flex-col">
+            <label className="font-semibold text-sm text-blue-800 mb-1">ถึงวันที่</label>
+            <input
+              type="date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              className="border border-blue-400 rounded px-3 py-2"
+            />
+          </div>
+
+          <div className="flex flex-col">
             <label className="font-semibold text-sm text-blue-800 mb-1">ประเภทจิตอาสา</label>
             <select
               value={formTypeFilter}
@@ -145,20 +155,10 @@ const handleDelete = (id: string) => {
             </select>
           </div>
 
-          <div className="flex flex-col">
-            <label className="font-semibold text-sm text-blue-800 mb-1">ถึงวันที่</label>
-            <input
-              type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="border border-blue-400 rounded px-3 py-2"
-            />
-          </div>
-
         </div>
 
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mt-4 mb-6">
-            <div className="flex col-span-3">
+            <div className="flex flex-col col-span-3 w-full">
               <input
                 type="text"
                 placeholder="ค้นหาคำในรายละเอียด..."
@@ -175,28 +175,28 @@ const handleDelete = (id: string) => {
               );
               setFiltered(data);
             }}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 w-20px rounded"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 w-full md:w-[665px] rounded"
           >
             🔍 ค้นหา
             </button>
           </div>
-
-        <table className="w-full table-auto border border-blue-300 rounded-lg overflow-hidden text-sm">
+        <div className='overflow-x-auto'>
+        <table className="min-w-[600px] w-full table-fixed border border-blue-300 rounded-lg overflow-hidden text-sm">
           <thead className="bg-gradient-to-r from-lime-300 to-teal-200 text-gray-800">
             <tr>
-              <th className="border px-4 py-2">หน่วยงาน</th>
-              <th className="border px-4 py-2">ประเภทจิตอาสา</th>
-              <th className="border px-4 py-2">วันที่</th>
-              <th className="border px-4 py-2">รายละเอียด</th>
+              <th className="border px-4 py-2 w-[120px]">หน่วยงาน</th>
+              <th className="border px-4 py-2 w-[90px]">ประเภทจิตอาสา</th>
+              <th className="border px-4 py-2 w-[110px]">วันที่</th>
+              <th className="border px-4 py-2 w-[400px]">รายละเอียด</th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((rec, idx) => (
               <tr key={idx} className="even:bg-white/50 odd:bg-white/30 transition hover:bg-yellow-50">
-                <td className="border px-4 py-2 ">{rec.subUnit}</td>
-                <td className="border px-4 py-2">{formatFormType(rec.formType)}</td>
-                <td className="border px-4 py-2">{rec.date}</td>
-                <td className="border px-4 py-2 whitespace-pre-wrap break-words relative group" title={rec.details}>
+                <td className="border px-4 py-2 w-[120px]">{rec.subUnit}</td>
+                <td className="border px-4 py-2 w-[90px]">{formatFormType(rec.formType)}</td>
+                <td className="border px-4 py-2 w-[110px]">{rec.date}</td>
+                <td className="border px-4 py-5 w-[400px] whitespace-pre-wrap break-words relative group" title={rec.details}>
                   {rec.details}
                   <div className='mt-2 flex gap-2'>
                     <button
@@ -231,6 +231,7 @@ const handleDelete = (id: string) => {
             )}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   );
