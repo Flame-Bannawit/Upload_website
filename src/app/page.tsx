@@ -422,7 +422,7 @@ export default function Page() {
               height: '1080px',
               borderRadius: '20px',
               overflow: 'hidden',
-              background: 'linear-gradient(to right, #d7fc3a, #76f1a5)',
+              background: 'linear-gradient(to bottom right, #d7fc3a, #33ccff)',
               padding: '20px',
               boxSizing: 'border-box',
               fontFamily: 'Prompt, sans-serif',
@@ -456,9 +456,9 @@ export default function Page() {
                 alt="ตรา1"
                 style={{
                   width: '100%',
-                  maxWidth: '300px',
-                  height: '190px',
-                  marginLeft:'-25px',
+                  maxWidth: '200px',
+                  height: '160px',
+                  marginLeft:'-10px',
                 }}
               />
 
@@ -469,7 +469,7 @@ export default function Page() {
                   textAlign: 'center',
                   fontSize: '40px',
                   lineHeight: '1.8',
-                  marginLeft: '-60px',
+                  marginLeft: '-55px',
                   color: '#004d86',
                   whiteSpace: 'nowrap',
                 }}
@@ -548,7 +548,7 @@ export default function Page() {
             <div
               style={{
                 display: 'grid',
-                gridTemplateColumns: '2fr 1fr 1fr',
+                gridTemplateColumns: '2fr 1.25fr 1.25fr',
                 gridTemplateRows: '1fr 1fr',
                 gridGap: '20px',
                 height: '550px',
@@ -605,17 +605,18 @@ export default function Page() {
             <div
               style={{
                 background: '#3b9ace',
-                borderRadius: '30px',
+                borderRadius: '45px',
                 padding: '20px',
                 color: '#000000',
-                fontSize: '36px',
-                lineHeight: '1.6',
+                fontSize: '37px',
+                lineHeight: '2',
                 minHeight: '150px',
                 whiteSpace: 'pre-wrap', // ให้เว้นบรรทัด
                 wordBreak: 'break-word', // ตัดคำ
-                textIndent: '2em',
+                textIndent: '4em',
                 height: '300px',
                 border: '3px solid #004d86',
+                letterSpacing: '1px',
               }}
             >
               {details}
